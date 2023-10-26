@@ -16,4 +16,30 @@ class TokenData(BaseModel):
     user_id: Optional[int]
 
 
+class ClientCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+    dni: str
+    physical_level: Optional[int] = None
+    country: str
+    administrative_area_level_1: str
+    locality: str
 
+
+class ClientCreated(BaseModel):
+    id: int
+    username: str
+    email: str
+    created_at: datetime
+
+
+class ChangePassword(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_password: str
+
+
+class Login(BaseModel):
+    username: str
+    password: str
