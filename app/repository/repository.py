@@ -40,22 +40,22 @@ def create_activity(db: Session, data: schema.ActivityCreate):
         address_id=address.id,
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow(),
-        likes = 0,
-        date = data.date,
-        desnivel = data.desnivel,
-        distance = data.distance,
-        price = data.price,
+        likes=0,
+        date=data.date,
+        elevation=data.elevation,
+        distance=data.distance,
+        price=data.price,
     )
     db.add(activity)
     db.flush()
 
     activity_details = models.ActivityDetails(
-        type = data.type,
-        requirements = data.requirements,
-        information = data.information,
-        created_at = datetime.utcnow(),
-        updated_at = datetime.utcnow(),
-        activity_id = activity.id
+        type=data.type,
+        requirements=data.requirements,
+        information=data.information,
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+        activity_id=activity.id
     )
 
     db.add(activity_details)

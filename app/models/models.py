@@ -26,8 +26,9 @@ class Address(Base):
 
 class Activity(Base):
     __tablename__ = 'activity'
+
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
     difficulty = Column(Integer, nullable=False)
     address_id = Column(Integer, ForeignKey('address.id'))
     tour_guide_id = Column(Integer, nullable=False)
@@ -35,24 +36,27 @@ class Activity(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
     date = Column(DateTime, nullable=False)
-    desnivel = Column(Float)
-    distance = Column(Float)
-    price = Column(Float)
+    elevation = Column(Float)
+    distance = Column(Float, nullable=False)
+    price = Column(Float, nullable=False)
 
 
 class ActivityDetails(Base):
     __tablename__ = 'activity_details'
-    activity_id = Column(Integer, ForeignKey('activity.id'))
+
     id = Column(Integer, primary_key=True, index=True)
-    type = Column(String)
+    type = Column(String, nullable=False)
     requirements = Column(Text)
     information = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
 
+    activity_id = Column(Integer, ForeignKey('activity.id'))
+
 
 class Images(Base):
     __tablename__ = 'images'
+
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
