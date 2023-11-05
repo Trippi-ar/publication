@@ -1,12 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import os
+from app.config import Settings
 
 from app.config import settings
 
 from app.models.models import Base
 
-DATABASE_URI = os.getenv('DATABASE_URI_BOOKING')
+DATABASE_URI = Settings.DATABASE_URI_BOOKING
 
 
 engine = create_engine(DATABASE_URI)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
@@ -23,50 +23,39 @@ class Address(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
 
-    users = relationship("Users", back_populates="address")
 
-
-class Users(Base):
-    __tablename__ = 'users'
-
+class Activity(Base):
+    __tablename__ = 'activity'
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, index=True, unique=True, nullable=False)
-    email = Column(String, unique=True, index=True, nullable=False)
-    password = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    is_active = Column(Boolean, default=False, nullable=False)
-    user_type = Column(String, nullable=False)
-
+    name = Column(String, nullable=False)
+    difficulty = Column(Integer, nullable=False)
     address_id = Column(Integer, ForeignKey('address.id'))
-    address = relationship("Address", back_populates="users")
-    client = relationship("Client", back_populates="users")
-    token = relationship("Token", back_populates="users")
-
-
-class Client(Base):
-    __tablename__ = 'client'
-
-    id = Column(Integer, primary_key=True, index=True)
-    dni = Column(String, unique=True, index=True)
-    physical_level = Column(Integer)
+    tour_guide_id = Column(Integer, nullable=False)
+    likes = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    date = Column(DateTime, nullable=False)
+    desnivel = Column(Float)
+    distance = Column(Float)
+    price = Column(Float)
 
-    users = relationship("Users", back_populates="client")
 
-
-class Token(Base):
-    __tablename__ = 'token'
-
+class ActivityDetails(Base):
+    __tablename__ = 'activity_details'
+    activity_id = Column(Integer, ForeignKey('activity.id'))
     id = Column(Integer, primary_key=True, index=True)
-    token = Column(String, nullable=False, unique=True)
-    role = Column(String, nullable=False)
-    expiration_date = Column(DateTime, default=datetime.utcnow(), nullable=False)
-    is_active = Column(Boolean, default=False, nullable=False)
+    type = Column(String)
+    requirements = Column(Text)
+    information = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), unique=True)
 
-    users = relationship("Users", back_populates="token")
+
+class Images(Base):
+    __tablename__ = 'images'
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
+    image1 = Column(String)
+    image2 = Column(String)
+    image3 = Column(String)
