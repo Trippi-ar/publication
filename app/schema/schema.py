@@ -40,4 +40,4 @@ class Activity(BaseModel):
 
 class LikeActivity(BaseModel):
     user_id: int
-    activity_id: int
+    activity_id: int = None

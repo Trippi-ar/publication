@@ -96,7 +96,7 @@ def get_activities(db: Session, tour_guide_id: str):
 def like_activity(db: Session, data: schema.LikeActivity):
         likes = db.query(models.Likes).filter(models.Likes.activity == data.activity_id ).filter(models.Likes.user_id == data.user_id).first()
         if likes is None:
-            like =models.Likes(
+            like = models.Likes(
                 activity = data.activity_id,
                 user_id = data.user_id,
                 created_at = datetime.utcnow(),
@@ -107,4 +107,5 @@ def like_activity(db: Session, data: schema.LikeActivity):
             db.add(like)
 
             db.commit()
+
 
