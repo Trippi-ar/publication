@@ -58,8 +58,29 @@ def create_activity(db: Session, data: schema.ActivityCreate):
     )
 
     db.add(activity_details)
-
     db.commit()
+
+
+def update_activity(db: Session, data: schema.ActivityUpdate):
+    activity = db.query(models.Activity).filter(models.Activity.id == data.id).first()
+    if activity:
+        if data.tour_guide_id == activity.tour_guide_id:
+            activity.difficulty = data.difficulty or activity.difficulty
+            activity.date = data.date or activity.date
+            activity.elevation = data.elevation or activity.elevation
+            activity.distance = data.distance or activity.distance
+            activity.price = data.price or activity.price
+            db.commit()
+            db.flush()
+            activitydetails = db.query(models.ActivityDetails).filter(models.ActivityDetails.activity_id == data.id).first()
+            activitydetails.type = data.type or activitydetails.type
+            activitydetails.requirements =data.requirements or activitydetails.requirements
+            activitydetails.information = data.information or activitydetails.information
+            db.commit()
+        else:
+            raise Exception("User does not own this activity")
+    else:
+        raise Exception("Activity not found")
 
 
 def get_activity_by_id(db: Session, activity_id: int):
@@ -85,8 +106,30 @@ def get_activity_by_id(db: Session, activity_id: int):
             }
     return data
 
+
 def get_activity_by_guide_id(db: Session, tour_guide_id: str):
-    return db.query(models.Activity).filter(models.Activity.tour_guide_id == tour_guide_id).first()
+    activity = db.query(models.Activity).filter(models.Activity.tour_guide_id == tour_guide_id).first()
+    if activity is None:
+        return None
+    activitydetails = db.query(models.ActivityDetails).filter(models.ActivityDetails.activity_id == activity.id).first()
+    if activitydetails is None:
+        return None
+    activitylikes = like_count = db.query(func.count(models.Likes.id)).filter(
+        models.Likes.activity == activity.id).scalar()
+    data = {"activity_id": activity.id,
+            "name": activity.name,
+            "tour_guide_id": activity.tour_guide_id,
+            "likes": activitylikes,
+            "difficulty": activity.difficulty,
+            "distance": activity.distance,
+            "date": activity.date,
+            "elevation": activity.elevation,
+            "price": activity.price,
+            "type": activitydetails.type,
+            "requirements": activitydetails.requirements,
+            "information": activitydetails.information,
+            }
+    return data
 
 
 def like_activity(db: Session, data: schema.LikeActivity):
@@ -139,3 +182,18 @@ def get_activities(db: Session):
             response.activities.append(activity_with_details)
 
     return response
+
+
+def delete_activity(db: Session, data: schema.DeleteActivity):
+
+    activity = db.query(models.Activity).filter(models.Activity.id == data.activity_id).first()
+    if activity:
+        if data.user_id == activity.tour_guide_id:
+            db.delete(activity)
+            db.commit()
+        else:
+            return {"message":"User does not own this activity"}
+        return {"message": "Activity deleted successfully"}
+    else:
+        return {"message": "Activity not found"}
+

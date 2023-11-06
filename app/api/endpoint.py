@@ -40,9 +40,14 @@ def create_activity(
 
 
 @router.get("/get_activity_by_id/",status_code=status.HTTP_200_OK)
-
 def get_activity(activity_id: int, db: Session = Depends(repository.get_db)):
     activity_get = repository.get_activity_by_id(db, activity_id)
+    return activity_get
+
+
+@router.get("/get_activity_by_user_id/",status_code=status.HTTP_200_OK)
+def get_activity(user_id: int, db: Session = Depends(repository.get_db)):
+    activity_get = repository.get_activity_by_id(db, user_id)
     return activity_get
 
 
@@ -67,3 +72,42 @@ def like_activity(activity_create: schema.LikeActivity,
 def get_activities(db: Session = Depends(repository.get_db)):
     activities = repository.get_activities(db)
     return activities
+
+
+@router.put("/update_activity/", status_code=status.HTTP_200_OK)
+def update_activity(
+    activity_id: int,
+    activity_create: schema.ActivityUpdate,
+    token: HTTPAuthorizationCredentials = Depends(token_auth_scheme),
+    db: Session = Depends(repository.get_db)
+):
+
+    authenticate = auth.authenticate(token.credentials, "guide")
+    if authenticate is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas")
+    activity_create.tour_guide_id = authenticate.get("user_id")
+    activity_create.id = activity_id
+    response = repository.update_activity(db, activity_create)
+
+    return response
+
+
+@router.put("/delete_activity/", status_code=status.HTTP_200_OK)
+def delete_activity(
+    activity_id: int,
+    token: HTTPAuthorizationCredentials = Depends(token_auth_scheme),
+    db: Session = Depends(repository.get_db)
+):
+    authenticate = auth.authenticate(token.credentials, "guide")
+    if authenticate is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales invalidas")
+    delete = schema.DeleteActivity
+    delete.user_id = authenticate.get("user_id")
+    delete.activity_id = activity_id
+    response = repository.delete_activity(db, delete)
+
+    return response
+
+

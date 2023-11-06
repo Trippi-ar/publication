@@ -22,6 +22,7 @@ class Address(Base):
     place_id = Column(String, unique=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
+    activity_id = Column(Integer, ForeignKey('activity.id'))
 
 
 class Activity(Base):
@@ -39,6 +40,8 @@ class Activity(Base):
     distance = Column(Float, nullable=False)
     price = Column(Float, nullable=False)
     details = relationship("ActivityDetails", uselist=False)
+
+
 
 class ActivityDetails(Base):
     __tablename__ = 'activity_details'

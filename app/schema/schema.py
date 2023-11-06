@@ -91,3 +91,18 @@ class MultiplesActivities(BaseModel):
 
     def get_all_activities(self):
         return self.activities
+
+
+class ActivityUpdate(BaseModel):
+    id: int
+    tour_guide_id: int = None
+    difficulty: int
+    distance: float
+    date: datetime
+    elevation: float
+    price: float
+    type: str
+    requirements: str
+    information: str
+
+
