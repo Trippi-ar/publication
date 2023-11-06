@@ -38,8 +38,7 @@ class Activity(Base):
     elevation = Column(Float)
     distance = Column(Float, nullable=False)
     price = Column(Float, nullable=False)
-
-
+    details = relationship("ActivityDetails", uselist=False)
 
 class ActivityDetails(Base):
     __tablename__ = 'activity_details'

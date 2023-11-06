@@ -89,10 +89,6 @@ def get_activity_by_guide_id(db: Session, tour_guide_id: str):
     return db.query(models.Activity).filter(models.Activity.tour_guide_id == tour_guide_id).first()
 
 
-def get_activities(db: Session, tour_guide_id: str):
-    return db.query(models.Activity).all()
-
-
 def like_activity(db: Session, data: schema.LikeActivity):
         likes = db.query(models.Likes).filter(models.Likes.activity == data.activity_id ).filter(models.Likes.user_id == data.user_id).first()
         if likes is None:
@@ -109,3 +105,37 @@ def like_activity(db: Session, data: schema.LikeActivity):
             db.commit()
 
 
+#def get_activities(db: Session):
+#    activities = db.query(models.Activity).all()
+#    response = schema.MultiplesActivities()
+#    response.activities = []
+#    response.activities = activities
+#    return response
+
+def get_activities(db: Session):
+    activities = db.query(models.Activity).all()
+    response = schema.MultiplesActivities()
+    response.activities = []
+
+    for activity in activities:
+        activity_details = db.query(models.ActivityDetails).filter_by(activity_id=activity.id).first()
+
+        if activity_details:
+            activity_with_details = schema.ActivityWithDetails(
+                activity_id=activity.id,
+                name=activity.name,
+                tour_guide_id=activity.tour_guide_id,
+                difficulty=activity.difficulty,
+                distance=activity.distance,
+                date=activity.date,
+                elevation=activity.elevation,
+                price=activity.price,
+                details=schema.ActivityDetails(
+                    type=activity_details.type,
+                    requirements=activity_details.requirements,
+                    information=activity_details.information,
+                )
+            )
+            response.activities.append(activity_with_details)
+
+    return response

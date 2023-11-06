@@ -1,6 +1,7 @@
 from fastapi import Depends, status, HTTPException, APIRouter
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.responses import JSONResponse
+from typing import List
 from sqlalchemy.orm import Session
 from datetime import timedelta
 from app.repository import repository
@@ -33,7 +34,9 @@ def create_activity(
   activity_create.tour_guide_id = authenticate.get("user_id")
   activity_created = repository.create_activity(db, activity_create)
 
-  return
+  return {
+        "message": "activity created"
+            }
 
 
 @router.get("/get_activity_by_id/",status_code=status.HTTP_200_OK)
@@ -55,6 +58,12 @@ def like_activity(activity_create: schema.LikeActivity,
     activity_create.user_id = authenticate.get("user_id")
     activity_created = repository.like_activity(db, activity_create)
 
-    return
+    return {
+        "message": "activity liked"
+            }
 
 
+@router.get("/get_activities/", status_code=status.HTTP_200_OK)
+def get_activities(db: Session = Depends(repository.get_db)):
+    activities = repository.get_activities(db)
+    return activities
