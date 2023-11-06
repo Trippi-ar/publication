@@ -22,7 +22,7 @@ class Address(Base):
     place_id = Column(String, unique=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    activity_id = Column(Integer, ForeignKey('activity.id'))
+
 
 
 class Activity(Base):

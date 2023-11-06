@@ -78,9 +78,9 @@ def update_activity(db: Session, data: schema.ActivityUpdate):
             activitydetails.information = data.information or activitydetails.information
             db.commit()
         else:
-            raise Exception("User does not own this activity")
+           return {"message": "User does not own this activity"}
     else:
-        raise Exception("Activity not found")
+        return {"message": "activity not found"}
 
 
 def get_activity_by_id(db: Session, activity_id: int):
@@ -148,12 +148,6 @@ def like_activity(db: Session, data: schema.LikeActivity):
             db.commit()
 
 
-#def get_activities(db: Session):
-#    activities = db.query(models.Activity).all()
-#    response = schema.MultiplesActivities()
-#    response.activities = []
-#    response.activities = activities
-#    return response
 
 def get_activities(db: Session):
     activities = db.query(models.Activity).all()
