@@ -32,13 +32,13 @@ class Activity(Base):
     difficulty = Column(Integer, nullable=False)
     address_id = Column(Integer, ForeignKey('address.id'))
     tour_guide_id = Column(Integer, nullable=False)
-    likes = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
     date = Column(DateTime, nullable=False)
     elevation = Column(Float)
     distance = Column(Float, nullable=False)
     price = Column(Float, nullable=False)
+
 
 
 class ActivityDetails(Base):
@@ -50,7 +50,6 @@ class ActivityDetails(Base):
     information = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-
     activity_id = Column(Integer, ForeignKey('activity.id'))
 
 
@@ -63,3 +62,15 @@ class Images(Base):
     image1 = Column(String)
     image2 = Column(String)
     image3 = Column(String)
+    activity_id = Column(Integer, ForeignKey('activity.id'))
+
+
+class Likes(Base):
+    __tablename__ = 'likes'
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
+    user_id = Column(Integer)
+    activity = Column(Integer, ForeignKey('activity.id'))
+
+
