@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
 
 
 class ActivityCreate(BaseModel):
@@ -10,99 +10,69 @@ class ActivityCreate(BaseModel):
     distance: float
     date: datetime
     elevation: float
+    duration: int
     price: float
+    languages: str
+    transport: str
+    description: str
+    tools: str
+    itinerary: str
     country: str
     administrative_area_level_1: str
     locality: str
-    requirements: str
-    information: str
     type: str
-
-
-class ActivityById(BaseModel):
-    id: int
-
-
-class Activity(BaseModel):
-    name: str
-    tour_guide_id: int
-    difficulty: int
-    distance: float
-    date: datetime
-    desnivel: float
-    price: float
-    country: str
-    administrative_area_level_1: str
-    locality: str
-    requirements: str
-    information: str
-    type: str
-
-
-class LikeActivity(BaseModel):
-    user_id: int
-    activity_id: int
-
-
-class DeleteActivity(BaseModel):
-    user_id: int = None
-    activity_id: int
-
-
-class ActivityDetails(BaseModel):
-    type: str
-    requirements: str
-    information: str
-
-
-class ActivityWithDetails(BaseModel):
-    activity_id: int
-    name: str
-    tour_guide_id: int
-    difficulty: int
-    distance: float
-    date: datetime
-    elevation: float
-    price: float
-    details: ActivityDetails
-
-
-
-class MultiplesActivities(BaseModel):
-    activities: List[ActivityWithDetails] = []
-
-    def reply_to_dict(self, activity: ActivityWithDetails):
-        details: activity.details
-        return {
-            "activity_id": activity.tour_guide_id,  # Replace with the correct attribute for activity_id
-            "name": activity.name,
-            "tour_guide_id": activity.tour_guide_id,
-            "difficulty": activity.difficulty,
-            "distance": activity.distance,
-            "date": activity.date,
-            "elevation": activity.desnivel,
-            "price": activity.price,
-            "details": {
-                "type": details.type,
-                "requirements": details.requirements,
-                "information": details.information,
-            }
-        }
-
-    def get_all_activities(self):
-        return self.activities
 
 
 class ActivityUpdate(BaseModel):
-    id: int
-    tour_guide_id: int = None
     difficulty: int
     distance: float
     date: datetime
     elevation: float
+    duration: int
     price: float
+    languages: str
+    transport: str
+    description: str
+    tools: str
+    itinerary: str
+    country: str
+    administrative_area_level_1: str
+    locality: str
     type: str
-    requirements: str
-    information: str
+    activity_id: int
 
 
+class ActivityFilter(BaseModel):
+    name: Optional[str]
+    tour_guide_id: Optional[int]
+    difficulty: Optional[int]
+    distance: Optional[float]
+    date: Optional[datetime]
+    elevation: Optional[float]
+    duration: Optional[int]
+    price: Optional[float]
+    languages: Optional[str]
+    transport: Optional[str]
+    description: Optional[str]
+    tools: Optional[str]
+    itinerary: Optional[str]
+    country: Optional[str]
+    administrative_area_level_1: Optional[str]
+    locality: Optional[str]
+    type: Optional[str]
+
+
+class BookingCreate(BaseModel):
+    activity_id: int
+    date: datetime
+    number_people: int
+    price: float
+    user_id: int
+
+
+class BookingUpdate(BaseModel):
+    booking_id: int
+    date: datetime
+    number_people: int
+    price: float
+    state: str

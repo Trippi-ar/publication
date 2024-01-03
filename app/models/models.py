@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, Text
-from sqlalchemy.orm import relationship
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -22,7 +21,7 @@ class Address(Base):
     place_id = Column(String, unique=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-
+    is_active = Column(Boolean, default=True)
 
 
 class Activity(Base):
@@ -38,21 +37,15 @@ class Activity(Base):
     date = Column(DateTime, nullable=False)
     elevation = Column(Float)
     distance = Column(Float, nullable=False)
+    duration = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
-    details = relationship("ActivityDetails", uselist=False)
-
-
-
-class ActivityDetails(Base):
-    __tablename__ = 'activity_details'
-
-    id = Column(Integer, primary_key=True, index=True)
+    languages = Column(String, nullable=False)
+    transport = Column(String, nullable=False)
+    description = Column(Text, nullable=False)
+    tools = Column(Text, nullable=False)
+    itinerary = Column(Text, nullable=False)
+    is_active = Column(Boolean, default=True)
     type = Column(String, nullable=False)
-    requirements = Column(Text)
-    information = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    activity_id = Column(Integer, ForeignKey('activity.id'))
 
 
 class Images(Base):
@@ -61,18 +54,20 @@ class Images(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    image1 = Column(String)
-    image2 = Column(String)
-    image3 = Column(String)
+    image = Column(String)
+    description = Column(String)
     activity_id = Column(Integer, ForeignKey('activity.id'))
 
 
-class Likes(Base):
-    __tablename__ = 'likes'
+class Booking(Base):
+    __tablename__ = 'booking'
+
     id = Column(Integer, primary_key=True, index=True)
+    activity_id = Column(Integer, ForeignKey('activity.id'))
+    user_id = Column(Integer, nullable=False)
+    number_people = Column(Integer, nullable=False)
+    date = Column(DateTime, nullable=False)
+    price = Column(Float, nullable=False)
+    state = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, onupdate=datetime.utcnow, nullable=False)
-    user_id = Column(Integer)
-    activity = Column(Integer, ForeignKey('activity.id'))
-
-

@@ -1,6 +1,5 @@
 import requests
 import json
-from app.config import Settings
 
 
 def authenticate(token: str, role_request: str):
@@ -22,8 +21,3 @@ def authenticate(token: str, role_request: str):
         return data
     else:
         print(response.status_code)
-
-
-
-
-
