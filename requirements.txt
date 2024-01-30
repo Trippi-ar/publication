@@ -13,4 +13,5 @@ python-multipart
 pydantic-settings
 SQLAlchemy-Utils
 requests
-pydantic
+httpx
+pytest

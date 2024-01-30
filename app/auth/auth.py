@@ -1,10 +1,11 @@
 import requests
 import json
 
+from app.config import settings
+
 
 def authenticate(token: str, role_request: str):
-    url = "http://users_ms:8000/api/users/auth"
-
+    url = Settings.AUTH_URL
     payload = json.dumps({
         "token": token,
         "role_request": role_request
@@ -17,7 +18,6 @@ def authenticate(token: str, role_request: str):
 
     if response.status_code == 200:
         data = response.json()
-        print(data)
         return data
     else:
         print(response.status_code)
