@@ -547,3 +547,21 @@ def delete_booking_by_user_id(db: Session, user_id: int):
         db.delete(i)
         db.commit()
     return {"message": "Booking deleted successfully"}
+
+
+def get_suggestions(db: Session, word: str):
+
+    activity_names = db.query(models.Activity).filter(models.Activity.name.ilike(f'%{word}%')).limit(3).all()
+    localities = db.query(models.Address).filter(models.Address.locality.ilike(f'%{word}%')).limit(3).all()
+    if len(localities) < 3:
+        remaining_limit = 3 - len(localities)
+        area_levels = db.query(models.Address).filter(models.Address.administrative_area_level_1.ilike(f'%{word}%')).limit(remaining_limit).all()
+    else:
+        area_levels = []
+    
+    suggestions = schema.Suggestions(
+        activities_name=[activity.name for activity in activity_names],
+        address=[locality.locality for locality in localities] + [area_level.administrative_area_level_1 for area_level in area_levels]
+    )
+
+    return suggestions

@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, constr, validator
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 
 class ActivityCreate(BaseModel):
@@ -76,3 +76,20 @@ class BookingUpdate(BaseModel):
     number_people: int
     price: float
     state: str
+
+
+class Suggestions(BaseModel):
+    activities_name: Optional[List[constr(max_length=100)]] = None
+    address: Optional[List[constr(max_length=100)]] = None
+
+    @validator('activities_name')
+    def validate_activities_name(cls, v):
+        if v is not None and len(v) > 3:
+            raise ValueError('More than 3 elements')
+        return v
+
+    @validator('address')
+    def validate_address(cls, v):
+        if v is not None and len(v) > 3:
+            raise ValueError('More than 3 elements')
+        return v

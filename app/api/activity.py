@@ -1,17 +1,26 @@
-from fastapi import Depends, status, APIRouter
+from fastapi import Depends, status, APIRouter, File, UploadFile
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from app.repository import repository
 from app.schema import schema
 from app.utils import utils
+from app.service import activity
 
-token_auth_scheme = HTTPBearer()
+import pyrebase
+from app.config import settings
+from fastapi.responses import JSONResponse
+
 
 router = APIRouter(
     prefix="/api",
     tags=['Activity']
 )
+
+token_auth_scheme = HTTPBearer()
+
+
+activity_service = UserService()
 
 
 @router.post("/", status_code=status.HTTP_200_OK)
@@ -126,5 +135,40 @@ def delete_activity_by_user_id(
 
     return response
 
+@router.post("/autocomplete/", status_code=status.HTTP_200_OK)
+def autocomplete(
+    word: str,
+    db: Session = Depends(repository.get_db)
+    ):
+    """
+    Devuelve sugerencias de actividades y direcciones en base a una palabra
+    """
+    response = activity.autocomplete(db, word)
+
+    return response
 
 
+@router.post("/upload/")
+async def upload_file(file: UploadFile = File(...)):
+    # Leer el contenido del archivo
+    image = await file.read()
+
+    config = {
+        "apiKey" : settings.API_KEY_FIREBASE,
+        "authDomain": settings.AUTH_DOMAIN_FIREBASE,
+        "projectId": settings.PROJECT_ID_FIREBASE,
+        "storageBucket": settings.STORAGE_BUCKET_FIREBASE,
+        "messagingSenderId": settings.MESSAGING_SENDER_ID_FIREBASE,
+        "appId": settings.APP_ID_FIREBASE,
+        "serviceAccount": "firebaseCredentials.json",
+        "databaseURL": settings.DATABASE_URL_FIREBASE,
+    }
+
+    firebase = pyrebase.initialize_app(config)
+    storage = firebase.storage()
+
+    content_type = "image/png"
+
+    storage.child(file.filename).put(image, content_type=content_type)
+
+    return {"filename": file.filename}
