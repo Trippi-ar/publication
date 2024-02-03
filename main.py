@@ -1,25 +1,16 @@
 from fastapi import FastAPI, status
-from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import activity, booking
-
+from app.api import publication_ep, booking_ep
+from app.config import configure_cors, configure_sentry
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:8080",
-]
+configure_cors(app)
+configure_sentry(app)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.include_router(publication_ep.router)
+app.include_router(booking_ep.router)
 
-app.include_router(activity.router)
-app.include_router(booking.router)
 
 @app.get("/health", status_code=status.HTTP_200_OK, tags=["Health Check"])
 async def health_check():
@@ -27,3 +18,11 @@ async def health_check():
     Verifica si el microservicio está en un estado saludable.
     """
     return {"status": "ok"}
+
+
+@app.get("/sentry-debug", status_code=status.HTTP_200_OK, tags=["Sentry"])
+async def trigger_error():
+    """
+    Endpoint para probar la integración de Sentry.
+    """
+    division_by_zero = 1 / 0

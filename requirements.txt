@@ -16,3 +16,5 @@ requests
 httpx
 pytest
 pyrebase4
+python-multipart
+sentry-sdk[fastapi]
