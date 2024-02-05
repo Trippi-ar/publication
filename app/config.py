@@ -59,7 +59,7 @@ class Settings:
     MESSAGING_SENDER_ID_FIREBASE = int(os.getenv("MESSAGING_SENDER_ID_FIREBASE"))
     APP_ID_FIREBASE = os.getenv("APP_ID_FIREBASE")
     DATABASE_URL_FIREBASE = os.getenv("DATABASE_URL_FIREBASE")
-    DSN_SENTRY = os.getenv("DSN_SENTRY")
+    DSN_SENTRY = os.getenv("DSN_SENTRY_PUBLICATIONS")
 
 
 settings = Settings()

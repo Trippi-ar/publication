@@ -1,6 +1,6 @@
 FROM python:3.11-alpine
 
-WORKDIR /activity-ms
+WORKDIR /publication-ms
 
 COPY requirements.txt .
 

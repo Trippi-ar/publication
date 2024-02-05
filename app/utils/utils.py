@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 from passlib.context import CryptContext
@@ -18,11 +20,9 @@ def verify(plain_password, hashed_password):
 
 
 def authenticate(token: str, role_request: str):
-    payload = {"token": token, "role_request": role_request}
+    payload = json.dumps({"token": token, "role_request": role_request})
     headers = {'Content-Type': 'application/json'}
-
-    response = requests.post(Settings.AUTH_URL, headers=headers, json=payload)
-
+    response = requests.request("POST", Settings.AUTH_URL, headers=headers, data=payload)
     if response.status_code == status.HTTP_200_OK:
         return response.json()
     else:

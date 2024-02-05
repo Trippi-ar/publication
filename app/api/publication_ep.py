@@ -1,4 +1,4 @@
-from fastapi import Depends, status, APIRouter, File, UploadFile
+from fastapi import Depends, status, APIRouter
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.schema import publication_schema

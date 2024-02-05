@@ -33,6 +33,7 @@ class Publication(Base, TimestampedUUIDMixin):
     __tablename__ = 'publication'
 
     address_id = Column(UUID(as_uuid=True), ForeignKey('address.id'))
+    # agregar address
     tour_guide_id = Column(UUID(as_uuid=True), nullable=False)
     languages = relationship("Languages", back_populates="publication")
     images = relationship("Images", back_populates="publication")

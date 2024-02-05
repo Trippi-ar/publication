@@ -14,9 +14,9 @@ class PublicationService:
     @staticmethod
     def create(request, token, images_file_names):
         try:
-            # authentication = authenticate(token, 'guide')
+            authentication = authenticate(token.credentials, 'guide')
             publication = publication_schema.Create(
-                tour_guide_id="f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                tour_guide_id=authentication.get('user_id'),
                 name=request.name,
                 difficulty=request.difficulty,
                 distance=request.distance,
