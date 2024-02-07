@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, Text, Enum
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, Text, Enum, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
@@ -74,25 +74,9 @@ class Activity(Base, TimestampedUUIDMixin):
     publication = relationship("Publication", back_populates="activity")
     bookings = relationship("Booking", back_populates="activity")
 
-    date = Column(DateTime, nullable=False)
+    date = Column(Date, nullable=False)
     max_participants = Column(Integer, nullable=False)
     available_spots = Column(Integer, nullable=False)
-    is_full = Column(Boolean, default=False, nullable=False)
-
-    def update_is_full(self):
-        self.is_full = self.available_spots <= 0
-
-    def reserve_spot(self, quantity=1):
-        if self.available_spots is None or self.available_spots >= quantity:
-            self.available_spots = max(0, self.available_spots - quantity)
-            self.update_is_full()
-
-    def cancel_spot(self, quantity=1):
-        if self.available_spots is None:
-            self.available_spots = self.max_participants - quantity
-        else:
-            self.available_spots = min(self.max_participants, self.available_spots + quantity)
-        self.update_is_full()
 
 
 class Booking(Base, TimestampedUUIDMixin):

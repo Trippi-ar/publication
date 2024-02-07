@@ -34,8 +34,7 @@ class PublicationService:
                 locality=request.locality
             )
             repository = PublicationRepository()
-            create_response = repository.create(publication)
-            return create_response
+            return repository.create(publication)
 
         except errors.AuthenticationError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
@@ -71,3 +70,37 @@ class PublicationService:
             return image_file_names
         except Exception:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Image upload failed")
+
+    @staticmethod
+    def get(publication_id):
+        try:
+            repository = PublicationRepository()
+            return repository.get(publication_schema.Params(id=publication_id))
+        except errors.RepositoryError:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error")
+        except Exception:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                detail="Publication retrieval failed")
+
+    @staticmethod
+    def get_all(pagination, _filter):
+        try:
+            repository = PublicationRepository()
+            return repository.get_all(pagination, _filter)
+        except errors.RepositoryError:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error")
+        except Exception:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                detail="Publications retrieval failed")
+
+    @staticmethod
+    def get_suggestions(suggestion):
+        try:
+            repository = PublicationRepository()
+            return repository.get_suggestions(suggestion)
+        except errors.RepositoryError:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error")
+        except Exception:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                detail="Suggestions retrieval failed")
+
