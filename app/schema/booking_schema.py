@@ -1,6 +1,6 @@
 from pydantic import BaseModel, UUID4
 
-from datetime import date
+from datetime import date, datetime
 
 
 class Availability(BaseModel):
@@ -27,4 +27,4 @@ class Response(BaseModel):
     participant: int
     price: float
     state: str
-    created_at: date
+    created_at: datetime

@@ -66,7 +66,8 @@ class PublicationService:
                 image_name = f"{images_uuid}.{image.content_type.split('/')[1]}"
                 new_image = await image.read()
                 storage.child(image_name).put(new_image, content_type=image.content_type)
-                image_file_names.append(image_name)
+                image_url = storage.child(image_name).get_url(token=None)
+                image_file_names.append(image_url)
             return image_file_names
         except Exception:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Image upload failed")

@@ -53,7 +53,8 @@ class BookingRepository:
                     date=booking.date,
                     participant=booking.quantity,
                     price=booking.price,
-                    state=booking.state
+                    state=booking.state,
+                    created_at=booking.created_at
                 )
             except SQLAlchemyError as e:
                 db.rollback()
