@@ -63,7 +63,7 @@ jobs:
                               STORAGE_BUCKET_FIREBASE = "${{ secrets.STORAGE_BUCKET_FIREBASE }}",
                               MESSAGING_SENDER_ID_FIREBASE = "${{ secrets.MESSAGING_SENDER_ID_FIREBASE }}",
                               APP_ID_FIREBASE = "${{ secrets.APP_ID_FIREBASE }}",
-                              DATABASE_URL_FIREBASE = "${{ secrets.DATABASE_URL_FIREBASE }},
+                              DATABASE_URL_FIREBASE = "${{ secrets.DATABASE_URL_FIREBASE }}",
                               SECRET_KEY="${{ secrets.SECRET_KEY }}", 
                               ALGORITHM="${{ secrets.ALGORITHM }}", 
                               ACCESS_TOKEN_EXPIRE_MINUTES="${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}", 
