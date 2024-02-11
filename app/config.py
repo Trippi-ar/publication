@@ -15,7 +15,7 @@ def configure_cors(app: FastAPI):
     ]
     app.add_middleware(
         CORSMiddleware,
-        #allow_origins=origins,
+        # allow_origins=origins,
         allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
@@ -48,11 +48,13 @@ def configure_firebase():
 
 
 class Settings:
-    SECRET_KEY = os.getenv("SECRET_KEY")
-    ALGORITHM = os.getenv("ALGORITHM")
-    ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
-    DATABASE_URI = os.getenv("DATABASE_URI_ACTIVITY")
-    AUTH_URL = os.getenv("AUTH_URL")
+    if os.getenv("ENVIRONMENT") == "dev-local":
+        DATABASE_URI = os.getenv("DATABASE_URI_LOCAL")
+    else:
+        DATABASE_URI = os.getenv("DATABASE_URI")
+
+    DSN_SENTRY = os.getenv("DSN_SENTRY")
+
     API_KEY_FIREBASE = os.getenv("API_KEY_FIREBASE")
     AUTH_DOMAIN_FIREBASE = os.getenv("AUTH_DOMAIN_FIREBASE")
     PROJECT_ID_FIREBASE = os.getenv("PROJECT_ID_FIREBASE")
@@ -60,7 +62,12 @@ class Settings:
     MESSAGING_SENDER_ID_FIREBASE = int(os.getenv("MESSAGING_SENDER_ID_FIREBASE"))
     APP_ID_FIREBASE = os.getenv("APP_ID_FIREBASE")
     DATABASE_URL_FIREBASE = os.getenv("DATABASE_URL_FIREBASE")
-    DSN_SENTRY = os.getenv("DSN_SENTRY_PUBLICATIONS")
+
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    ALGORITHM = os.getenv("ALGORITHM")
+    ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
+    AUTH_URL = os.getenv("AUTH_URL")
 
 
 settings = Settings()
