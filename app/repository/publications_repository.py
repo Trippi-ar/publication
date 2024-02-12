@@ -188,13 +188,11 @@ class PublicationRepository:
     def search(pagination: publication_schema.Pagination, word: str):
         with PublicationRepository._get_db_session() as db:
             try:
-                query = db.query(models.Publication)
-                query = query.filter(models.Publication.name.like(f'%{word}%'))
-                query = query.join(models.Address).filter(models.Address.full_address.like(f'%{word}%'))
-                if query is None:
-                    raise errors.RepositoryError("No publications found")
-                publications = query.limit(pagination.per_page).offset(
+                publications = db.query(models.Publication).filter(
+                    models.Publication.name.like(f'%{word}%')).limit(pagination.per_page).offset(
                     (pagination.page - 1) * pagination.per_page).all()
+                if publications is None:
+                    raise errors.RepositoryError("No publications found")
                 publications = [PublicationRepository.get(publication_schema.Params(id=publication.id)) for publication
                                 in publications]
                 return publications
