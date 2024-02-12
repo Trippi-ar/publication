@@ -104,3 +104,9 @@ class Suggestions(BaseModel):
     name: List[str]
     full_address: List[str]
 
+
+class SearchFilter(BaseModel):
+    name: Optional[str] = None
+    date: Optional[str] = None
+    available_spots: Optional[int] = None
+    address: Optional[str] = None

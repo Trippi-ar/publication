@@ -46,3 +46,16 @@ def check_availability(
     Check availability for a publication
     """
     return booking_service.check_availability(availability)
+
+
+@router.put("/{booking_id}", status_code=status.HTTP_200_OK, response_model=booking_schema.Response)
+def update_booking(
+        booking_id,
+        booking: booking_schema.Update,
+        token: HTTPAuthorizationCredentials = Depends(token_auth_scheme),
+        booking_service: BookingService = Depends(BookingService),
+):
+    """
+    Update a booking
+    """
+    return booking_service.update(booking_id, booking, token)

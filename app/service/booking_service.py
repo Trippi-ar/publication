@@ -32,8 +32,11 @@ class BookingService:
     def get_all(token):
         try:
             # authentication = authenticate(token.credentials, 'client')
-            authentication = authenticate(token.credentials, 'guide')
-            return repository.get_all(authentication.get('user_id'))
+            authentication = authenticate(token.credentials, 'public')
+            if authentication.get('role') == 'guide':
+                return repository.get_all(authentication.get('user_id'))
+            else:
+                return repository.get_all_guide(authentication.get('user_id'))
         except errors.AuthenticationError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         except errors.RepositoryError:
@@ -50,3 +53,15 @@ class BookingService:
         except Exception:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 detail="Availability check failed")
+
+    @staticmethod
+    def update(booking_id, update_booking: booking_schema.Update, token):
+        try:
+            authentication = authenticate(token.credentials, 'client')
+            return repository.update(booking_id, update_booking)
+        except errors.AuthenticationError:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        except errors.RepositoryError:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error")
+        except Exception:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Update booking failed")

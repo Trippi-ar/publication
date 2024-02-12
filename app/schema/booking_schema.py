@@ -28,3 +28,7 @@ class Response(BaseModel):
     price: float
     state: str
     created_at: datetime
+
+
+class Update(BaseModel):
+    state: str

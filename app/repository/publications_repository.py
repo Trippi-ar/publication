@@ -158,7 +158,8 @@ class PublicationRepository:
                 elif filters.country is not None:
                     query = query.join(models.Address).filter(models.Address.country == filters.country)
                 elif filters.available_spots is not None:
-                    query = query.join(models.Activity).filter(models.Activity.available_spots >= filters.available_spots)
+                    query = query.join(models.Activity).filter(
+                        models.Activity.available_spots >= filters.available_spots)
                 if query is None:
                     raise errors.RepositoryError("No publications found")
                 publications = query.limit(pagination.per_page).offset(
@@ -185,14 +186,26 @@ class PublicationRepository:
                 raise errors.RepositoryError(e)
 
     @staticmethod
-    def search(pagination: publication_schema.Pagination, word: str):
+    def search(pagination: publication_schema.Pagination, search_filter: publication_schema.SearchFilter):
         with PublicationRepository._get_db_session() as db:
             try:
-                publications = db.query(models.Publication).filter(
-                    models.Publication.name.like(f'%{word}%')).limit(pagination.per_page).offset(
+                query = db.query(models.Publication)
+
+                if search_filter.name is not None:
+                    query = query.filter(models.Publication.name.ilike(f'%{search_filter.name}%'))
+
+                if search_filter.address is not None:
+                    query = query.join(models.Address).filter(models.Address.full_address.ilike(f'%{search_filter.address}%'))
+
+                if search_filter.date is not None:
+                    query = query.join(models.Activity).filter(models.Activity.date == search_filter.date)
+
+                if search_filter.available_spots is not None:
+                    query = query.join(models.Activity).filter(
+                        models.Activity.available_spots >= search_filter.available_spots)
+
+                publications = query.limit(pagination.per_page).offset(
                     (pagination.page - 1) * pagination.per_page).all()
-                if publications is None:
-                    raise errors.RepositoryError("No publications found")
                 publications = [PublicationRepository.get(publication_schema.Params(id=publication.id)) for publication
                                 in publications]
                 return publications

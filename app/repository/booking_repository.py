@@ -85,6 +85,30 @@ class BookingRepository:
                 raise errors.RepositoryError(e)
 
     @staticmethod
+    def get_all_guide(user_id):
+        with BookingRepository._get_db_session() as db:
+            try:
+                bookings = db.query(models.Booking).join(models.Activity).join(models.Publication).filter(
+                    models.Publication.tour_guide_id == user_id).all()
+                response = []
+                for booking in bookings:
+                    publication = db.query(models.Publication).filter(
+                        models.Publication.id == booking.activity.publication_id).first()
+                    response.append(booking_schema.Response(
+                        id=booking.id,
+                        name=publication.name,
+                        user_id=booking.user_id,
+                        date=booking.date,
+                        participant=booking.quantity,
+                        price=booking.price,
+                        state=booking.state,
+                        created_at=booking.created_at,
+                    ))
+                return response
+            except SQLAlchemyError as e:
+                raise errors.RepositoryError(e)
+
+    @staticmethod
     def check_availability(availability: booking_schema.Availability):
         with BookingRepository._get_db_session() as db:
             try:
@@ -101,4 +125,32 @@ class BookingRepository:
                     return False
                 return True
             except SQLAlchemyError as e:
+                raise errors.RepositoryError(e)
+
+    @staticmethod
+    def update(booking_id, update_booking: booking_schema.Update):
+        with BookingRepository._get_db_session() as db:
+            try:
+                booking = db.query(models.Booking).filter(
+                    models.Booking.id == booking_id).first()
+                if booking is None:
+                    raise errors.RepositoryError("Booking not found")
+                if booking.state == "confirmed":
+                    raise errors.RepositoryError("Booking already confirmed")
+                if booking.state == "cancelled":
+                    raise errors.RepositoryError("Booking already cancelled")
+                booking.state = update_booking.state
+                db.commit()
+                return booking_schema.Response(
+                    id=booking.id,
+                    name=booking.activity.publication.name,
+                    user_id=booking.user_id,
+                    date=booking.date,
+                    participant=booking.quantity,
+                    price=booking.price,
+                    state=booking.state,
+                    created_at=booking.created_at
+                )
+            except SQLAlchemyError as e:
+                db.rollback()
                 raise errors.RepositoryError(e)
