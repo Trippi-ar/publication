@@ -105,3 +105,13 @@ class PublicationService:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 detail="Suggestions retrieval failed")
 
+    @staticmethod
+    def search(pagination, word):
+        try:
+            repository = PublicationRepository()
+            return repository.search(pagination, word)
+        except errors.RepositoryError:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error")
+        except Exception:
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                detail="Search failed")

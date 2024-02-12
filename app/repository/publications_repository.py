@@ -184,3 +184,19 @@ class PublicationRepository:
             except SQLAlchemyError as e:
                 raise errors.RepositoryError(e)
 
+    @staticmethod
+    def search(pagination: publication_schema.Pagination, word: str):
+        with PublicationRepository._get_db_session() as db:
+            try:
+                full_address_results = db.query(models.Address).filter(
+                    models.Address.full_address.like(f'%{word}%')).limit(pagination.per_page).offset(
+                    (pagination.page - 1) * pagination.per_page).all()
+                publication_name_results = db.query(models.Publication).filter(
+                    models.Publication.name.like(f'%{word}%')).limit(pagination.per_page).offset(
+                    (pagination.page - 1) * pagination.per_page).all()
+                return [PublicationRepository.get(publication_schema.Params(name=publication.name)) for publication in
+                        publication_name_results] + [
+                           PublicationRepository.get(publication_schema.Params(id=address.id)) for address in
+                           full_address_results]
+            except SQLAlchemyError as e:
+                raise errors.RepositoryError(e)

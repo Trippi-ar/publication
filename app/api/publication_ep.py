@@ -69,3 +69,13 @@ def get_suggestions(
     return publication_service.get_suggestions(suggestion)
 
 
+@router.get("/search", status_code=status.HTTP_200_OK, response_model=List[publication_schema.GetResponse])
+def search(
+        pagination: Annotated[publication_schema.Pagination, Depends(dependencies.pagination_params)],
+        publication_service: PublicationService = Depends(PublicationService),
+        word: str = Depends()
+):
+    """
+    Search publications
+    """
+    return publication_service.search(pagination, word)
