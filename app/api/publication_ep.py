@@ -73,7 +73,7 @@ def get_suggestions(
 def search(
         pagination: Annotated[publication_schema.Pagination, Depends(dependencies.pagination_params)],
         publication_service: PublicationService = Depends(PublicationService),
-        word: publication_schema.Word = Depends()
+        word: publication_schema.Filter = Depends()
 ):
     """
     Search publications

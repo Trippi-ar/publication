@@ -109,7 +109,7 @@ class PublicationService:
     def search(pagination, word):
         try:
             repository = PublicationRepository()
-            return repository.search(pagination, word)
+            return repository.search(pagination, word.name)
         except errors.RepositoryError:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error")
         except Exception:
