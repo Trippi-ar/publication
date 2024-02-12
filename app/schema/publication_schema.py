@@ -105,4 +105,5 @@ class Suggestions(BaseModel):
     full_address: List[str]
 
 
-
+class Word(BaseModel):
+    word: str
