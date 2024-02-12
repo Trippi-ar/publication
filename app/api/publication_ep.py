@@ -78,4 +78,4 @@ def search(
     """
     Search publications
     """
-    return publication_service.search(pagination, word)
+    return
