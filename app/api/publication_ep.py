@@ -71,9 +71,9 @@ def get_suggestions(
 
 @router.get("/search", status_code=status.HTTP_200_OK, response_model=List[publication_schema.GetResponse])
 def search(
+        word: str,
         pagination: Annotated[publication_schema.Pagination, Depends(dependencies.pagination_params)],
         publication_service: PublicationService = Depends(PublicationService),
-        word: publication_schema.Filter = Depends()
 ):
     """
     Search publications
