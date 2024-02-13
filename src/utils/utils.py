@@ -5,8 +5,8 @@ import requests
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
 
-from app.config import Settings
-from app.utils import errors
+from src.config import Settings
+from src.utils import errors
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

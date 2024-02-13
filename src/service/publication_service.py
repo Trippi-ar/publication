@@ -3,11 +3,11 @@ import uuid
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 
-from app.utils.utils import authenticate
-from app.utils import errors
-from app.repository.publications_repository import PublicationRepository
-from app.schema import publication_schema
-from app.config import configure_firebase
+from src.utils.utils import authenticate
+from src.utils import errors
+from src.repository.publications_repository import PublicationRepository
+from src.schema import publication_schema
+from src.config import configure_firebase
 
 
 class PublicationService:

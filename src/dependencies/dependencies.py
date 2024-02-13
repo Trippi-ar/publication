@@ -1,6 +1,6 @@
 from fastapi import Query
 
-from app.schema.publication_schema import Pagination
+from src.schema.publication_schema import Pagination
 
 
 def pagination_params(

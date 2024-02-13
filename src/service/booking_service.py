@@ -1,10 +1,10 @@
 from fastapi import HTTPException, status
 
-from app.repository.booking_repository import BookingRepository
-from app.schema import booking_schema
+from src.repository.booking_repository import BookingRepository
+from src.schema import booking_schema
 
-from app.utils import errors
-from app.utils.utils import authenticate
+from src.utils import errors
+from src.utils.utils import authenticate
 
 repository = BookingRepository()
 

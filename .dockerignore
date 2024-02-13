@@ -5,4 +5,5 @@ env/
 
 .excalidraw
 settings.zip
-
+build_and_deploy.sh
+docker-compose.yml

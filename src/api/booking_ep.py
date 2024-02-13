@@ -3,8 +3,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from typing import List
 
-from app.schema import booking_schema
-from app.service.booking_service import BookingService
+from src.schema import booking_schema
+from src.service.booking_service import BookingService
 
 token_auth_scheme = HTTPBearer()
 

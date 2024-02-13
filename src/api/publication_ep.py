@@ -6,9 +6,9 @@ from typing import Annotated
 from pydantic import UUID4
 from typing import List
 
-from app.schema import publication_schema
-from app.service.publication_service import PublicationService
-from app.dependencies import dependencies
+from src.schema import publication_schema
+from src.service.publication_service import PublicationService
+from src.dependencies import dependencies
 
 router = APIRouter(
     prefix="/api",
