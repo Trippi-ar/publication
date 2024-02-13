@@ -8,7 +8,7 @@ client = TestClient(app)
 
 def test_is_available():
     data = {
-        "publication_id": "c7edea7e-7d60-4506-9166-736ff196062f",
+        "publication_id": "2181b7f1-835f-4758-86ec-12a0505852be",
         "date": "2024-10-02",
         "participant": 1
     }
@@ -19,7 +19,7 @@ def test_is_available():
 
 def test_not_available():
     data = {
-        "publication_id": "682bb453-0432-47a0-8098-01d90b5740ec",
+        "publication_id": "2181b7f1-835f-4758-86ec-12a0505852be",
         "date": "2024-10-02",
         "participant": 2
     }

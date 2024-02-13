@@ -1,4 +1,5 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, Depends, HTTPException
+
 
 from src.api import publication_ep, booking_ep, health_ep
 from src.config import configure_cors, configure_sentry
