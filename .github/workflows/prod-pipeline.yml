@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  run-tests:
+  run-unit-tests:
     runs-on: ubuntu-latest
     env:
       ENVIRONMENT: dev-local
@@ -44,9 +44,9 @@ jobs:
       - name: Run tests
         run: pytest
         
-  build-and-push:
+  build-push-deploy:
     runs-on: ubuntu-latest
-    needs: run-tests
+    needs: run-unit-tests
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -94,3 +94,18 @@ jobs:
             --add-cloudsql-instances crested-primacy-413823:us-central1:publications \
             --project crested-primacy-413823 \
             --update-env-vars ENVIRONMENT="${{ secrets.ENVIRONMENT }}",DATABASE_URI="${{ secrets.DATABASE_URI }}",DSN_SENTRY="${{ secrets.DSN_SENTRY }}",API_KEY_FIREBASE="${{ secrets.API_KEY_FIREBASE }}",AUTH_DOMAIN_FIREBASE="${{ secrets.AUTH_DOMAIN_FIREBASE }}",PROJECT_ID_FIREBASE="${{ secrets.PROJECT_ID_FIREBASE }}",STORAGE_BUCKET_FIREBASE="${{ secrets.STORAGE_BUCKET_FIREBASE }}",MESSAGING_SENDER_ID_FIREBASE="${{ secrets.MESSAGING_SENDER_ID_FIREBASE }}",APP_ID_FIREBASE="${{ secrets.APP_ID_FIREBASE }}",DATABASE_URL_FIREBASE="${{ secrets.DATABASE_URL_FIREBASE }}",SECRET_KEY="${{ secrets.SECRET_KEY }}",ALGORITHM="${{ secrets.ALGORITHM }}",ACCESS_TOKEN_EXPIRE_MINUTES="${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}",AUTH_URL="${{ secrets.AUTH_URL }}"
+
+  run-integration-tests:
+    runs-on: ubuntu-latest
+    needs: build-push-deploy
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Navigate to integration tests directory and 
+        run: |
+            cd integration_tests && sudo npm install && sudo npx playwright install
+            
+      - name: Run Tests
+        run: |
+            cd integration_tests && sudo npx codeceptjs run --steps
