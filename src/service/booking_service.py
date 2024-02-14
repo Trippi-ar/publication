@@ -57,7 +57,7 @@ class BookingService:
     @staticmethod
     def update(booking_id, update_booking: booking_schema.Update, token):
         try:
-            authentication = authenticate(token.credentials, 'client')
+            authentication = authenticate(token.credentials, 'public')
             return repository.update(booking_id, update_booking)
         except errors.AuthenticationError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
