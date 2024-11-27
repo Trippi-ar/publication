@@ -50,7 +50,7 @@ class PublicationService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid input")
 
         except Exception:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Publication creation failed")
+            raise Exception
 
     @staticmethod
     async def upload_image(images):
