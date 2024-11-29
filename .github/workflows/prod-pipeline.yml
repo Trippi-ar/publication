@@ -21,11 +21,21 @@ jobs:
 
       - name: Build Docker Compose
         run: |
-          docker compose up --build -d      
-      - name: Wait for services to be ready
-        run: sleep 10
+          docker compose up --build -d 
       
-      - name: Run pytest inside container
+      - name: Wait for container to be healthy
         run: |
-          CONTAINER_ID=$(docker ps --filter "name=publications" --format "{{.ID}}")
-          docker exec $CONTAINER_ID sh -c "cd /src && pytest -vv --tb=long"
+          until [ "$(docker inspect -f '{{.State.Health.Status}}' publications)" == "healthy" ]; do
+            echo "Waiting for container to be healthy..."
+            sleep 5
+          done
+             
+      - name: Run tests
+        run: |
+          CONTAINER_ID=$(docker ps --filter "name=publications" --filter "status=running" --format "{{.ID}}")
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "Container is not running. Exiting..."
+            exit 1
+          fi
+            docker exec $CONTAINER_ID sh -c "cd /src && pytest -vv --tb=long"
+        
