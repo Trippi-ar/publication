@@ -13,29 +13,40 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create .env file
-        run: echo "${{ secrets.ENV_FILE_CONTENT }}" > .env
+        run: |
+          echo "ENVIRONMENT=dev-local" >> .env
+          echo "DATABASE_URI_LOCAL=postgresql://postgres:rootroot@34.70.81.203/publications >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "ALGORITHM=${{ secrets.ALGORITHM }}" >> .env
+          echo "ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}" >> .env
+          echo "SMTP_SERVER=${{ secrets.SMTP_SERVER }}" >> .env
+          echo "SMTP_PORT=${{ secrets.SMTP_PORT }}" >> .env
+          echo "EMAIL_ADDRESS=${{ secrets.EMAIL_ADDRESS }}" >> .env
+          echo "PASSWORD_EMAIL=${{ secrets.PASSWORD_EMAIL }}" >> .env
+          echo "SECRET_KEY_EMAIL=${{ secrets.SECRET_KEY_EMAIL }}" >> .env
+          echo "ALGORITHM_EMAIL=${{ secrets.ALGORITHM_EMAIL }}" >> .env
+          echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
+          echo "API_KEY_FIREBASE=${{ secrets.API_KEY_FIREBASE }}" >> .env
+          echo "AUTH_DOMAIN_FIREBASE=${{ secrets.AUTH_DOMAIN_FIREBASE }}" >> .env
+          echo "PROJECT_ID_FIREBASE=${{ secrets.PROJECT_ID_FIREBASE }}" >> .env
+          echo "STORAGE_BUCKET_FIREBASE=${{ secrets.STORAGE_BUCKET_FIREBASE }}" >> .env
+          echo "MESSAGING_SENDER_ID_FIREBASE=${{ secrets.MESSAGING_SENDER_ID_FIREBASE }}" >> .env
+          echo "APP_ID_FIREBASE=${{ secrets.APP_ID_FIREBASE }}" >> .env
+          echo "DATABASE_URL_FIREBASE=${{ secrets.DATABASE_URL_FIREBASE }}" >> .env
 
       - name: Generate Image Tag
         id: tag
         run: echo "::set-output name=tag::$(git log --pretty=format:'%h' -n 1)"
 
-      - name: Build Docker Compose
+      - name: Build Docker Image
         run: |
-          docker compose up --build -d 
+          docker build -t joaquinreyero12/publications:${{ steps.tag.outputs.tag }} .
       
-      - name: Wait for container to be healthy
+      - name: Run Container
         run: |
-          until [ "$(docker inspect -f '{{.State.Health.Status}}' publications)" == "healthy" ]; do
-            echo "Waiting for container to be healthy..."
-            sleep 5
-          done
-             
-      - name: Run tests
+          docker run --name publications-container -d -p 8002:8080 --env-file .env joaquinreyero12/publications:${{ steps.tag.outputs.tag }}
+
+      - name: Run Tests Inside Container
         run: |
-          CONTAINER_ID=$(docker ps --filter "name=publications" --filter "status=running" --format "{{.ID}}")
-          if [ -z "$CONTAINER_ID" ]; then
-            echo "Container is not running. Exiting..."
-            exit 1
-          fi
-            docker exec $CONTAINER_ID sh -c "cd /src && pytest -vv --tb=long"
+          docker exec publications-container sh -c "cd /src && pytest -vv --tb=long"
         
