@@ -15,7 +15,7 @@ jobs:
       - name: Create .env file
         run: |
           echo "ENVIRONMENT=dev-local" >> .env
-          echo "DATABASE_URI_LOCAL=postgresql://postgres:rootroot@34.70.81.203/publications >> .env
+          echo "DATABASE_URI_LOCAL=postgresql://postgres:rootroot@34.70.81.203/publications" >> .env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
           echo "ALGORITHM=${{ secrets.ALGORITHM }}" >> .env
           echo "ACCESS_TOKEN_EXPIRE_MINUTES=${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}" >> .env
@@ -46,7 +46,13 @@ jobs:
         run: |
           docker run --name publications-container -d -p 8002:8080 --env-file .env joaquinreyero12/publications:${{ steps.tag.outputs.tag }}
 
+      - name: Wait for Container to be Healthy
+        run: |
+          until [ "$(docker inspect -f '{{.State.Health.Status}}' publications-container)" == "healthy" ]; do
+            echo "Waiting for container to be healthy..."
+            sleep 5
+          done
+
       - name: Run Tests Inside Container
         run: |
           docker exec publications-container sh -c "cd /src && pytest -vv --tb=long"
-        
