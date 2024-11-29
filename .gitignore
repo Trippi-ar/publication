@@ -4,4 +4,3 @@
 env/
 .env
 firebaseCredentials.json
-integration_tests/node_modules
