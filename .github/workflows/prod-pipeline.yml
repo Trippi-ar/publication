@@ -128,7 +128,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: push-deploy
     outputs: 
-      integration_failed: ${{ steps.init.outputs.integration_failed }}
+      integration_failed: ${{ steps.set-failure-status.outputs.integration_failed }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -183,8 +183,13 @@ jobs:
         continue-on-error: true
 
       - name: Set output for integration failed
+        id: set-failure-status
         run: |
           echo "integration_failed=$([[ $? -ne 0 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+    
+      - name: Log integration failed output
+        run: |
+          echo "Integration failed: ${{ steps.set-failure-status.outputs.integration_failed }}"
 
   rollback-build-push-deploy:
     runs-on: ubuntu-latest
