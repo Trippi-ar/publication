@@ -178,19 +178,21 @@ jobs:
           python -m playwright install
 
       - name: Run Integration Tests
+        id: integration-tests
         run: |
           cd integration_tests && pytest --maxfail=5 --disable-warnings
+        continue-on-error: true
 
       - name: Set output for integration failed
         id: set-failure-status
-        if: always()
         run: |
-          echo "integration_failed=$([[ $? -ne 0 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
-    
-      - name: Log integration failed output
+          echo "::set-output name=integration_fail::true"
+
+      - name: Set output for integration success
+        if: ${{ steps.integration-tests.outcome == 'success' }}
+        id: set-success-status
         run: |
-          echo "Integration failed: ${{ steps.set-failure-status.outputs.integration_failed }}"
-        if: always()
+          echo "::set-output name=integration_fail::false"
 
   rollback-build-push-deploy:
     runs-on: ubuntu-latest
