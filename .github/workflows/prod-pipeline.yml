@@ -182,26 +182,19 @@ jobs:
         run: |
           cd integration_tests && pytest --maxfail=5 --disable-warnings
         continue-on-error: true
-
-      - name: Set output for integration failed
+  
+      - name: Set output for integration status
         id: set-failure-status
         run: |
-          echo "integration_failed=true" >> $GITHUB_ENV
-
+          if [ "${{ steps.integration-tests.outcome }}" == "failure" ]; then
+            echo "integration_failed=true" >> $GITHUB_OUTPUT
+          else
+            echo "integration_failed=false" >> $GITHUB_OUTPUT
+          fi
       - name: Print Integration Fail Status
         run: |
           echo "Integration Fail Status: ${{ steps.set-failure-status.outputs.integration_failed }}"
-
-      - name: Set output for integration success
-        if: ${{ steps.integration-tests.outcome == 'success' }}
-        id: set-success-status
-        run: |
-          echo "integration_failed=false" >> $GITHUB_ENV
-
-      - name: Print Integration Fail Status 2
-        run: |
-          echo "Integration Fail Status: ${{ steps.set-failure-status.outputs.integration_failed }}"
-
+          
   rollback-build-push-deploy:
     runs-on: ubuntu-latest
     needs: run-integration-tests
