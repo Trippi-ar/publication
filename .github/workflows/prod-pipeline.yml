@@ -9,7 +9,7 @@ jobs:
   build-unit-test:
     runs-on: ubuntu-latest
     outputs:
-      docker_tag: ${{ steps.generate_tag.outputs.tag }}
+      docker_tag: ${{ steps.init.outputs.docker_tag }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -56,7 +56,11 @@ jobs:
         id: generate_tag
         run: | 
           echo "tag=$(git log --pretty=format:'%h' -n 1)" >> $GITHUB_ENV
-          echo "tag=${{ env.tag }}" >> $GITHUB_OUTPUT
+          echo "docker_tag=${{ env.tag }}" >> $GITHUB_OUTPUT
+      
+      - name: Debug tag
+        run: |
+          echo "Docker tag: ${{ env.tag }}"
 
       - name: Build Docker Image
         run: |
