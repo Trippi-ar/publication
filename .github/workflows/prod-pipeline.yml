@@ -42,20 +42,8 @@ jobs:
         run: |
           docker build -t joaquinreyero12/publications:${{ steps.tag.outputs.tag }} .
       
-      - name: Run Container
+      - name: Run Unit Test
         run: |
-          docker run --name publications-container -d -p 8002:8080 --env-file .env joaquinreyero12/publications:${{ steps.tag.outputs.tag }}
+          docker run --rm --env-file .env -v $(pwd):/app -w /app joaquinreyero12/publications:${{ steps.tag.outputs.tag }} pytest -vv --tb=long
 
-      - name: Wait for Container to be Healthy
-        run: |
-          until [ "$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}starting{{end}}' publications-container)" == "healthy" ]; do
-            echo "Waiting for container to be healthy..."
-            sleep 5
-          done
-            
-      - name: Run Tests Inside Container
-        run: |
-          echo "Waiting for container to be ready..."
-          sleep 10
-          docker exec publications-container sh -c "cd /src && pytest -vv --tb=long"
 
