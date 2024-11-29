@@ -46,13 +46,6 @@ jobs:
         run: |
           docker run --name publications-container -d -p 8002:8080 --env-file .env joaquinreyero12/publications:${{ steps.tag.outputs.tag }}
 
-      - name: Wait for Container to be Healthy
-        run: |
-          until [ "$(docker inspect -f '{{.State.Health.Status}}' publications-container)" == "healthy" ]; do
-            echo "Waiting for container to be healthy..."
-            sleep 5
-          done
-
       - name: Run Tests Inside Container
         run: |
           docker exec publications-container sh -c "cd /src && pytest -vv --tb=long"
