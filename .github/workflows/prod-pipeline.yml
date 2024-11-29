@@ -188,11 +188,19 @@ jobs:
         run: |
           echo "integration_failed=true" >> $GITHUB_ENV
 
+      - name: Print Integration Fail Status
+        run: |
+          echo "Integration Fail Status: ${{ steps.set-failure-status.outputs.integration_failed }}"
+
       - name: Set output for integration success
         if: ${{ steps.integration-tests.outcome == 'success' }}
         id: set-success-status
         run: |
           echo "integration_failed=false" >> $GITHUB_ENV
+
+      - name: Print Integration Fail Status 2
+        run: |
+          echo "Integration Fail Status: ${{ steps.set-failure-status.outputs.integration_failed }}"
 
   rollback-build-push-deploy:
     runs-on: ubuntu-latest
