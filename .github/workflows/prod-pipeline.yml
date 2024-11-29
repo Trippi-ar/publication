@@ -39,17 +39,17 @@ jobs:
           echo '{
             "type": "service_account",
             "project_id": "activity-storage-1a571",
-            "private_key_id": "c528cb438ce4a3b6592a27ec69cdc054d6ad59df",
-            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCq8gLx7Utz95Xk\n7QlYk7VdzfJL+fjbWXnjZGm7k9Hm0VQ7liHwE65oiCjsQ6+hnMMWkBhUoAWyQGCD\nrTwOFVZCxzWuNTclAqFAc2JZOKudOhqBeW6K4bU5dOXwsliRnpPjhOqrQc1OUqUZ\nUusA0sWbiOmyqZorqUE/XkzBySd0esl36jKbBj36MTqcqqSz+aViNZWPV2QzWdcw\nIu5+BoKSNq1KitBfYxgSLJlnOQuby4EK9gSTkauqGR/IhehjFb1xlDrTFiWdmvLm\n67EIrPGoIbHBPlC//UjRo4eoQF3dwBZemuYkr21oqAaMZ5jvTE8QMhr7um06XeYt\n6xFyML0VAgMBAAECgf5bO8X6jvWfHOYZr2tNhJvoa+Uec7V3StPT7UTc9HTedol1\nfVHWOhr9rx3o3fH+D7H4CD05D42TLTuo3TOXnkRxPOOAcm2F/77NzHDCGVo2Pwus\n4yf/alodTUOIDUVrl9fUpFJPh3XGS+gcNzMvWhHX3J8cnqRnZtPe8peuXE4/VxV/\nY3Uju5OFMDkK/s1jrdZpH9RYlKtWtMllD7aI+f5naM1/hOPalz6oEWHEXiajSgr5\naTpGeVAXQL0/XGImtVkn0J8yWnk+ZJlCppZvm9a2tGTgGDFYmZsul6X7pILXdfmq\nTw+KKxVCBfrCnhNUllQu7Qp3kqQHyuPgnh+1YQKBgQDi693h48QzuIceZGTSZt1/\n/joCWjVc+gsVboNnYEbU+lnqJNGdZmaDhW6U1ilxcMgrhrp+QyJtWR9QbYyMuRJZ\nQh7oiUGLqwzQVpfBBYdriL4aH1BZM9vOTnhK+lAl8vxmhxwk4I4xmKO8bJwQnWOo\n9yj3Z0HcSxp6irc6q5Ia0QKBgQDA2duJPf8DvYl/MmlPulA0gbehYP7yaAkh52xx\nDSFhyRtitctK9/A0vTAipPDEMxf0De3s4X/DMe/VaEKY1Lm3+im9EQ5FkMNbTC0m\nD3PJxWcIVdBtxkQzFtbGogu2twcKXQaoab4sC6uHZJI4H3Ir5Wvl2qW7h9dLqpvg\n8ZKHBQKBgAal4lo70gOx5EN/rXR8jwCw8gIfonCW4rw+AJuGtoyGyRuS+JEj7tzr\ni9HQdGZeZ37e85e/X8LUWZaBnxyAT4lN5pnpa4IsALQZ1VhSUSVVXDxnrnLukgH5\nSoznyHFULRDT5H8wFPpe/m0GwYu7ELBijVCyNbu+d4gfiD6vyBgBAoGBAJqfklft\nr0QOeenUP3+/QIN45gSsQn2VUI0wgk/6WSOQHTb9z6uiM6P1dFyypqCI3tG9QWDG\nRKv6o/MVjx/+n5GVMFX5ENpSAXB4GVME3K+QaNXUCDOb3h6gV0AXuRCcmzaB886g\nSewCx1rdFieNfvsXDXXT40IC3mo6tpSa3AMJAoGALoe3x+S83wIQQw2DteQW06oa\nVCklRZt/7O/9xHXLCXZB4AXOH2ukBScBhaDZ9mq6LouHGrRCch6kcM087tvRQyZh\nxuSgHiZ4T6oUugz/LYHpilgXDNGFrP2U0POBrbF6cROGm5ivS4O6u45l99rnN6vS\nJiOFtujHt6MAajsAHpY=\n-----END PRIVATE KEY-----\n",
-            "client_email": "firebase-adminsdk-4vk34@activity-storage-1a571.iam.gserviceaccount.com",
-            "client_id": "107495645468725024755",
+            "private_key_id": "${{ secrets.FIREBASE_PRIVATE_KEY_ID }}",
+            "private_key": "${{ secrets.FIREBASE_PRIVATE_KEY }}",
+            "client_email": "${{ secrets.FIREBASE_CLIENT_EMAIL }}",
+            "client_id": "${{ secrets.FIREBASE_CLIENT_ID }}",
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4vk34%40activity-storage-1a571.iam.gserviceaccount.com",
+            "client_x509_cert_url": "${{ secrets.FIREBASE_CLIENT_CERT_URL }}",
             "universe_domain": "googleapis.com"
           }' > firebaseCredentials.json
-
+        
       - name: Generate Image Tag
         id: tag
         run: echo "::set-output name=tag::$(git log --pretty=format:'%h' -n 1)"
@@ -75,26 +75,26 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Generate Image Tag
-        id: tag
-        run: echo "::set-output name=tag::$(git log --pretty=format:'%h' -n 1)"
-      
       - name: Create Firebase Credentials File
         run: |
           echo '{
             "type": "service_account",
             "project_id": "activity-storage-1a571",
-            "private_key_id": "c528cb438ce4a3b6592a27ec69cdc054d6ad59df",
-            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCq8gLx7Utz95Xk\n7QlYk7VdzfJL+fjbWXnjZGm7k9Hm0VQ7liHwE65oiCjsQ6+hnMMWkBhUoAWyQGCD\nrTwOFVZCxzWuNTclAqFAc2JZOKudOhqBeW6K4bU5dOXwsliRnpPjhOqrQc1OUqUZ\nUusA0sWbiOmyqZorqUE/XkzBySd0esl36jKbBj36MTqcqqSz+aViNZWPV2QzWdcw\nIu5+BoKSNq1KitBfYxgSLJlnOQuby4EK9gSTkauqGR/IhehjFb1xlDrTFiWdmvLm\n67EIrPGoIbHBPlC//UjRo4eoQF3dwBZemuYkr21oqAaMZ5jvTE8QMhr7um06XeYt\n6xFyML0VAgMBAAECgf5bO8X6jvWfHOYZr2tNhJvoa+Uec7V3StPT7UTc9HTedol1\nfVHWOhr9rx3o3fH+D7H4CD05D42TLTuo3TOXnkRxPOOAcm2F/77NzHDCGVo2Pwus\n4yf/alodTUOIDUVrl9fUpFJPh3XGS+gcNzMvWhHX3J8cnqRnZtPe8peuXE4/VxV/\nY3Uju5OFMDkK/s1jrdZpH9RYlKtWtMllD7aI+f5naM1/hOPalz6oEWHEXiajSgr5\naTpGeVAXQL0/XGImtVkn0J8yWnk+ZJlCppZvm9a2tGTgGDFYmZsul6X7pILXdfmq\nTw+KKxVCBfrCnhNUllQu7Qp3kqQHyuPgnh+1YQKBgQDi693h48QzuIceZGTSZt1/\n/joCWjVc+gsVboNnYEbU+lnqJNGdZmaDhW6U1ilxcMgrhrp+QyJtWR9QbYyMuRJZ\nQh7oiUGLqwzQVpfBBYdriL4aH1BZM9vOTnhK+lAl8vxmhxwk4I4xmKO8bJwQnWOo\n9yj3Z0HcSxp6irc6q5Ia0QKBgQDA2duJPf8DvYl/MmlPulA0gbehYP7yaAkh52xx\nDSFhyRtitctK9/A0vTAipPDEMxf0De3s4X/DMe/VaEKY1Lm3+im9EQ5FkMNbTC0m\nD3PJxWcIVdBtxkQzFtbGogu2twcKXQaoab4sC6uHZJI4H3Ir5Wvl2qW7h9dLqpvg\n8ZKHBQKBgAal4lo70gOx5EN/rXR8jwCw8gIfonCW4rw+AJuGtoyGyRuS+JEj7tzr\ni9HQdGZeZ37e85e/X8LUWZaBnxyAT4lN5pnpa4IsALQZ1VhSUSVVXDxnrnLukgH5\nSoznyHFULRDT5H8wFPpe/m0GwYu7ELBijVCyNbu+d4gfiD6vyBgBAoGBAJqfklft\nr0QOeenUP3+/QIN45gSsQn2VUI0wgk/6WSOQHTb9z6uiM6P1dFyypqCI3tG9QWDG\nRKv6o/MVjx/+n5GVMFX5ENpSAXB4GVME3K+QaNXUCDOb3h6gV0AXuRCcmzaB886g\nSewCx1rdFieNfvsXDXXT40IC3mo6tpSa3AMJAoGALoe3x+S83wIQQw2DteQW06oa\nVCklRZt/7O/9xHXLCXZB4AXOH2ukBScBhaDZ9mq6LouHGrRCch6kcM087tvRQyZh\nxuSgHiZ4T6oUugz/LYHpilgXDNGFrP2U0POBrbF6cROGm5ivS4O6u45l99rnN6vS\nJiOFtujHt6MAajsAHpY=\n-----END PRIVATE KEY-----\n",
-            "client_email": "firebase-adminsdk-4vk34@activity-storage-1a571.iam.gserviceaccount.com",
-            "client_id": "107495645468725024755",
+            "private_key_id": "${{ secrets.FIREBASE_PRIVATE_KEY_ID }}",
+            "private_key": "${{ secrets.FIREBASE_PRIVATE_KEY }}",
+            "client_email": "${{ secrets.FIREBASE_CLIENT_EMAIL }}",
+            "client_id": "${{ secrets.FIREBASE_CLIENT_ID }}",
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4vk34%40activity-storage-1a571.iam.gserviceaccount.com",
+            "client_x509_cert_url": "${{ secrets.FIREBASE_CLIENT_CERT_URL }}",
             "universe_domain": "googleapis.com"
           }' > firebaseCredentials.json
 
+      - name: Generate Image Tag
+        id: tag
+        run: echo "::set-output name=tag::$(git log --pretty=format:'%h' -n 1)"
+        
       - name: Build and Push Docker Image
         run: |
           docker build -t joaquinreyero12/publications:${{ steps.tag.outputs.tag }} .
@@ -220,14 +220,14 @@ jobs:
           echo '{
             "type": "service_account",
             "project_id": "activity-storage-1a571",
-            "private_key_id": "c528cb438ce4a3b6592a27ec69cdc054d6ad59df",
-            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCq8gLx7Utz95Xk\n7QlYk7VdzfJL+fjbWXnjZGm7k9Hm0VQ7liHwE65oiCjsQ6+hnMMWkBhUoAWyQGCD\nrTwOFVZCxzWuNTclAqFAc2JZOKudOhqBeW6K4bU5dOXwsliRnpPjhOqrQc1OUqUZ\nUusA0sWbiOmyqZorqUE/XkzBySd0esl36jKbBj36MTqcqqSz+aViNZWPV2QzWdcw\nIu5+BoKSNq1KitBfYxgSLJlnOQuby4EK9gSTkauqGR/IhehjFb1xlDrTFiWdmvLm\n67EIrPGoIbHBPlC//UjRo4eoQF3dwBZemuYkr21oqAaMZ5jvTE8QMhr7um06XeYt\n6xFyML0VAgMBAAECgf5bO8X6jvWfHOYZr2tNhJvoa+Uec7V3StPT7UTc9HTedol1\nfVHWOhr9rx3o3fH+D7H4CD05D42TLTuo3TOXnkRxPOOAcm2F/77NzHDCGVo2Pwus\n4yf/alodTUOIDUVrl9fUpFJPh3XGS+gcNzMvWhHX3J8cnqRnZtPe8peuXE4/VxV/\nY3Uju5OFMDkK/s1jrdZpH9RYlKtWtMllD7aI+f5naM1/hOPalz6oEWHEXiajSgr5\naTpGeVAXQL0/XGImtVkn0J8yWnk+ZJlCppZvm9a2tGTgGDFYmZsul6X7pILXdfmq\nTw+KKxVCBfrCnhNUllQu7Qp3kqQHyuPgnh+1YQKBgQDi693h48QzuIceZGTSZt1/\n/joCWjVc+gsVboNnYEbU+lnqJNGdZmaDhW6U1ilxcMgrhrp+QyJtWR9QbYyMuRJZ\nQh7oiUGLqwzQVpfBBYdriL4aH1BZM9vOTnhK+lAl8vxmhxwk4I4xmKO8bJwQnWOo\n9yj3Z0HcSxp6irc6q5Ia0QKBgQDA2duJPf8DvYl/MmlPulA0gbehYP7yaAkh52xx\nDSFhyRtitctK9/A0vTAipPDEMxf0De3s4X/DMe/VaEKY1Lm3+im9EQ5FkMNbTC0m\nD3PJxWcIVdBtxkQzFtbGogu2twcKXQaoab4sC6uHZJI4H3Ir5Wvl2qW7h9dLqpvg\n8ZKHBQKBgAal4lo70gOx5EN/rXR8jwCw8gIfonCW4rw+AJuGtoyGyRuS+JEj7tzr\ni9HQdGZeZ37e85e/X8LUWZaBnxyAT4lN5pnpa4IsALQZ1VhSUSVVXDxnrnLukgH5\nSoznyHFULRDT5H8wFPpe/m0GwYu7ELBijVCyNbu+d4gfiD6vyBgBAoGBAJqfklft\nr0QOeenUP3+/QIN45gSsQn2VUI0wgk/6WSOQHTb9z6uiM6P1dFyypqCI3tG9QWDG\nRKv6o/MVjx/+n5GVMFX5ENpSAXB4GVME3K+QaNXUCDOb3h6gV0AXuRCcmzaB886g\nSewCx1rdFieNfvsXDXXT40IC3mo6tpSa3AMJAoGALoe3x+S83wIQQw2DteQW06oa\nVCklRZt/7O/9xHXLCXZB4AXOH2ukBScBhaDZ9mq6LouHGrRCch6kcM087tvRQyZh\nxuSgHiZ4T6oUugz/LYHpilgXDNGFrP2U0POBrbF6cROGm5ivS4O6u45l99rnN6vS\nJiOFtujHt6MAajsAHpY=\n-----END PRIVATE KEY-----\n",
-            "client_email": "firebase-adminsdk-4vk34@activity-storage-1a571.iam.gserviceaccount.com",
-            "client_id": "107495645468725024755",
+            "private_key_id": "${{ secrets.FIREBASE_PRIVATE_KEY_ID }}",
+            "private_key": "${{ secrets.FIREBASE_PRIVATE_KEY }}",
+            "client_email": "${{ secrets.FIREBASE_CLIENT_EMAIL }}",
+            "client_id": "${{ secrets.FIREBASE_CLIENT_ID }}",
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
             "token_uri": "https://oauth2.googleapis.com/token",
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4vk34%40activity-storage-1a571.iam.gserviceaccount.com",
+            "client_x509_cert_url": "${{ secrets.FIREBASE_CLIENT_CERT_URL }}",
             "universe_domain": "googleapis.com"
           }' > firebaseCredentials.json
 

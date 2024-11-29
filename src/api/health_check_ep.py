@@ -45,7 +45,4 @@ async def check_firebase():
         storage.child("test-health-check").get_url(token=None)
         return {"status": "ok", "message": "Firebase connection is healthy"}
     except Exception as e:
-        return JSONResponse(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={"status": "error", "message": f"Firebase connection failed: {str(e)}"}
-        )
+        return {"status": "error", "message": f"Firebase connection failed: {str(e)}"}

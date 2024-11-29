@@ -70,7 +70,7 @@ class PublicationService:
                 image_file_names.append(image_url)
             return image_file_names
         except Exception:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Image upload failed")
+            raise Exception
 
     @staticmethod
     def get(publication_id):
@@ -116,46 +116,3 @@ class PublicationService:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 detail="Search failed")
 
-def test_create_publication_ep_invalid_data():
-    mock_token = MagicMock()
-    mock_token.credentials = "mocked_token"
-    mock_request_data = {
-        "name": "",  # Nombre vacío es inválido
-        "difficulty": "easy",
-        "distance": -10.5,  # Distancia negativa es inválida
-        "duration": 120,
-        "price": 15.0,
-        "description": "Test description",
-        "tools": "None",
-        "type": "public",
-        "languages": ["english", "spanish"],
-        "max_participants": 20,
-        "dates": ["12-02-2025", "13-02-2025"],
-        "country": "Test Country",
-        "administrative_area_level_1": "Test State",
-        "locality": "Test City"
-    }
-    mock_files = {
-        "images": ("test_image.jpg", b"file_content", "image/jpeg")
-    }
-
-    with patch.object(PublicationService, "create", side_effect=HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid input")) as mock_create:
-
-        with open(mock_files["images"][0], "wb") as file:
-            file.write(mock_files["images"][1])
-        files = {"images": (mock_files["images"][0], open(mock_files["images"][0], "rb"), mock_files["images"][2])}
-
-        response = client.post(
-            "/api/",
-            data=mock_request_data,
-            files=files,
-            headers={"Authorization": f"Bearer {mock_token.credentials}"}
-        )
-
-        # Validar que el endpoint responde con el código correcto
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.json() == {"detail": "Invalid input"}
-
-        # Validar que el método `create` fue llamado
-        mock_create.assert_called_once()
