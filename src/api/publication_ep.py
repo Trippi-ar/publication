@@ -42,7 +42,7 @@ def get_publication(
     """
     Get a publication by id
     """
-    return publication_service.get(publication_id)
+    return None
 
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[publication_schema.GetResponse])
