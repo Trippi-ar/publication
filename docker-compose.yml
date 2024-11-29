@@ -5,9 +5,7 @@ services:
       - .env
     environment:
       ENVIRONMENT: ${ENVIRONMENT}
-
       DATABASE_URI_LOCAL: ${DATABASE_URI_LOCAL}
-
       API_KEY_FIREBASE: ${API_KEY_FIREBASE}
       AUTH_DOMAIN_FIREBASE: ${AUTH_DOMAIN_FIREBASE}
       PROJECT_ID_FIREBASE: ${PROJECT_ID_FIREBASE}
@@ -15,15 +13,19 @@ services:
       MESSAGING_SENDER_ID_FIREBASE: ${MESSAGING_SENDER_ID_FIREBASE}
       APP_ID_FIREBASE: ${APP_ID_FIREBASE}
       DATABASE_URL_FIREBASE: ${DATABASE_URL_FIREBASE}
-
       SECRET_KEY: ${SECRET_KEY}
       ALGORITHM: ${ALGORITHM}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
-
       AUTH_URL: ${AUTH_URL}
-
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 8002:8080
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://0.0.0.0:8080/db && curl -f http://0.0.0.0:8080/firebase || exit 1"]
+      interval: 15s
+      timeout: 8s
+      retries: 3
+      start_period: 10s
+

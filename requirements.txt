@@ -15,6 +15,7 @@ SQLAlchemy-Utils
 requests
 httpx
 pytest
+pytest-asyncio
 pyrebase4
 python-multipart
-setuptools
+setuptools 
