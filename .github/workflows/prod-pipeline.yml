@@ -8,6 +8,8 @@ on:
 jobs:
   build-unit-test:
     runs-on: ubuntu-latest
+    outputs:
+      docker_tag: ${{ steps.init.outputs.docker_tag }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -51,8 +53,10 @@ jobs:
           }' > firebaseCredentials.json
         
       - name: Generate Image Tag
-        id: tag
-        run: echo "tag=$(git log --pretty=format:'%h' -n 1)" >> $GITHUB_ENV
+        id: generate_tag
+        run: | 
+          echo "tag=$(git log --pretty=format:'%h' -n 1)" >> $GITHUB_ENV
+          echo "tag=${{ env.tag }}" >> $GITHUB_OUTPUT
 
       - name: Build Docker Image
         run: |
@@ -67,7 +71,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          
+
       - name: Push Docker Image
         if: success()
         run: |
@@ -87,7 +91,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Pull Docker image from Docker Hub
-        run: docker pull joaquinreyero12/publications:${{ env.tag }}
+        run: docker pull joaquinreyero12/publications:${{ needs.build-unit-test.outputs.docker_tag }}
 
       - name: Authenticate with Google Cloud Platform
         uses: google-github-actions/auth@v2
@@ -96,18 +100,18 @@ jobs:
           
       - name: Tag Docker image for Google Container Registry
         run: |
-          docker tag joaquinreyero12/publications:${{ env.tag }} gcr.io/crested-primacy-413823/publications:${{ env.tag }}
+          docker tag joaquinreyero12/publications:${{ needs.build-unit-test.outputs.docker_tag }} gcr.io/crested-primacy-413823/publications:${{ needs.build-unit-test.outputs.docker_tag }}
 
       - name: Authenticate Docker to Google Container Registry
         run: gcloud auth configure-docker
 
       - name: Push Docker image to Google Container Registry
-        run: docker push gcr.io/crested-primacy-413823/publications:${{ env.tag }}
+        run: docker push gcr.io/crested-primacy-413823/publications:${{ needs.build-unit-test.outputs.docker_tag }}
 
       - name: Deploy On Google Cloud
         run: |
           gcloud run deploy publications \
-            --image gcr.io/crested-primacy-413823/publications:${{ env.tag }} \
+            --image gcr.io/crested-primacy-413823/publications:${{ needs.build-unit-test.outputs.docker_tag }} \
             --platform managed \
             --region us-east1 \
             --allow-unauthenticated \
@@ -176,7 +180,6 @@ jobs:
       - name: Set output for integration failed
         run: |
           echo "integration_failed=$([[ $? -ne 0 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
-
 
   rollback-build-push-deploy:
     runs-on: ubuntu-latest
