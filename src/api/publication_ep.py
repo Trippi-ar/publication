@@ -28,10 +28,7 @@ async def create_publication(
     Create a new publication
     """
 
-    return publication_service.create(
-        request,
-        token,
-        await publication_service.upload_image(request.images))
+    return None
 
 
 @router.get("/{publication_id}", status_code=status.HTTP_200_OK, response_model=publication_schema.GetResponse)
@@ -42,7 +39,7 @@ def get_publication(
     """
     Get a publication by id
     """
-    return publication_service.get(publication_id)
+    return None
 
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[publication_schema.GetResponse])
