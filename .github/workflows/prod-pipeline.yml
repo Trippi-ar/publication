@@ -52,15 +52,20 @@ jobs:
         
       - name: Generate Image Tag
         id: tag
-        run: echo "::set-output name=tag::$(git log --pretty=format:'%h' -n 1)"
+        run: echo "tag=$(git log --pretty=format:'%h' -n 1)" >> $GITHUB_ENV
 
       - name: Build Docker Image
         run: |
-          docker build -t joaquinreyero12/publications:${{ steps.tag.outputs.tag }} .
+          docker build -t joaquinreyero12/publications:${{ env.tag }} .
       
       - name: Run Unit Test
         run: |
-          docker run --rm --env-file .env -v $(pwd):/app -w /app joaquinreyero12/publications:${{ steps.tag.outputs.tag }} pytest src -vv --tb=long
+          docker run --rm --env-file .env -v $(pwd):/app -w /app joaquinreyero12/publications:${{ env.tag }} pytest src -vv --tb=long
+      
+      - name: Push Docker Image
+        if: success()
+        run: |
+          docker push joaquinreyero12/publications:${{ env.tag }}
 
   push-deploy:
     runs-on: ubuntu-latest
@@ -75,33 +80,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Create Firebase Credentials File
-        run: |
-          echo '{
-            "type": "service_account",
-            "project_id": "activity-storage-1a571",
-            "private_key_id": "${{ secrets.FIREBASE_PRIVATE_KEY_ID }}",
-            "private_key": "${{ secrets.FIREBASE_PRIVATE_KEY }}",
-            "client_email": "${{ secrets.FIREBASE_CLIENT_EMAIL }}",
-            "client_id": "${{ secrets.FIREBASE_CLIENT_ID }}",
-            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-            "token_uri": "https://oauth2.googleapis.com/token",
-            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url": "${{ secrets.FIREBASE_CLIENT_CERT_URL }}",
-            "universe_domain": "googleapis.com"
-          }' > firebaseCredentials.json
-
-      - name: Generate Image Tag
-        id: tag
-        run: echo "::set-output name=tag::$(git log --pretty=format:'%h' -n 1)"
-        
-      - name: Build and Push Docker Image
-        run: |
-          docker build -t joaquinreyero12/publications:${{ steps.tag.outputs.tag }} .
-          docker push joaquinreyero12/publications:${{ steps.tag.outputs.tag }}
-
       - name: Pull Docker image from Docker Hub
-        run: docker pull joaquinreyero12/publications:${{ steps.tag.outputs.tag }}
+        run: docker pull joaquinreyero12/publications:${{ env.tag }}
 
       - name: Authenticate with Google Cloud Platform
         uses: google-github-actions/auth@v2
@@ -110,18 +90,18 @@ jobs:
           
       - name: Tag Docker image for Google Container Registry
         run: |
-          docker tag joaquinreyero12/publications:${{ steps.tag.outputs.tag }} gcr.io/crested-primacy-413823/publications:${{ steps.tag.outputs.tag }}
+          docker tag joaquinreyero12/publications:${{ env.tag }} gcr.io/crested-primacy-413823/publications:${{ env.tag }}
 
       - name: Authenticate Docker to Google Container Registry
         run: gcloud auth configure-docker
 
       - name: Push Docker image to Google Container Registry
-        run: docker push gcr.io/crested-primacy-413823/publications:${{ steps.tag.outputs.tag }}
+        run: docker push gcr.io/crested-primacy-413823/publications:${{ env.tag }}
 
       - name: Deploy On Google Cloud
         run: |
           gcloud run deploy publications \
-            --image gcr.io/crested-primacy-413823/publications:${{ steps.tag.outputs.tag }} \
+            --image gcr.io/crested-primacy-413823/publications:${{ env.tag }} \
             --platform managed \
             --region us-east1 \
             --allow-unauthenticated \
@@ -213,7 +193,7 @@ jobs:
 
       - name: Generate Image Tag
         id: tag
-        run: echo "::set-output name=tag::$(git log --pretty=format:'%h' -n 1)"
+        run: echo "tag=$(git log --pretty=format:'%h' -n 1)" >> $GITHUB_ENV
 
       - name: Create Firebase Credentials File
         run: |
@@ -233,11 +213,11 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t joaquinreyero12/publications:${{ steps.tag.outputs.tag }} .
-          docker push joaquinreyero12/publications:${{ steps.tag.outputs.tag }}
+          docker build -t joaquinreyero12/publications:${{ env.tag }} .
+          docker push joaquinreyero12/publications:${{ env.tag }}
 
       - name: Pull Docker image from Docker Hub
-        run: docker pull joaquinreyero12/publications:${{ steps.tag.outputs.tag }}
+        run: docker pull joaquinreyero12/publications:${{ env.tag }}
 
       - name: Authenticate with Google Cloud Platform
         uses: google-github-actions/auth@v2
@@ -246,18 +226,18 @@ jobs:
           
       - name: Tag Docker image for Google Container Registry
         run: |
-          docker tag joaquinreyero12/publications:${{ steps.tag.outputs.tag }} gcr.io/crested-primacy-413823/publications:${{ steps.tag.outputs.tag }}
+          docker tag joaquinreyero12/publications:${{ env.tag }} gcr.io/crested-primacy-413823/publications:${{ env.tag }}
 
       - name: Authenticate Docker to Google Container Registry
         run: gcloud auth configure-docker
 
       - name: Push Docker image to Google Container Registry
-        run: docker push gcr.io/crested-primacy-413823/publications:${{ steps.tag.outputs.tag }}
+        run: docker push gcr.io/crested-primacy-413823/publications:${{ env.tag }}
 
       - name: Deploy On Google Cloud
         run: |
           gcloud run deploy publications \
-            --image gcr.io/crested-primacy-413823/publications:${{ steps.tag.outputs.tag }} \
+            --image gcr.io/crested-primacy-413823/publications:${{ env.tag }} \
             --platform managed \
             --region us-east1 \
             --allow-unauthenticated \
