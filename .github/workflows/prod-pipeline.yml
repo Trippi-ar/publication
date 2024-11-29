@@ -55,4 +55,7 @@ jobs:
             
       - name: Run Tests Inside Container
         run: |
+          echo "Waiting for container to be ready..."
+          sleep 10
           docker exec publications-container sh -c "cd /src && pytest -vv --tb=long"
+
