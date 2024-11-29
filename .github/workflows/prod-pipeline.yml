@@ -180,12 +180,12 @@ jobs:
       - name: Run Integration Tests
         run: |
           cd integration_tests && pytest --maxfail=5 --disable-warnings
+          echo "exit_code=$?" >> $GITHUB_ENV
         continue-on-error: true
 
       - name: Set output for integration failed
         id: set-failure-status
         run: |
-          exit_code=$?
           if [ $exit_code -ne 0 ]; then
             echo "integration_failed=true" >> $GITHUB_OUTPUT
           else
