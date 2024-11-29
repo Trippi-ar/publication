@@ -9,7 +9,7 @@ jobs:
   build-unit-test:
     runs-on: ubuntu-latest
     outputs:
-      docker_tag: ${{ steps.init.outputs.docker_tag }}
+      docker_tag: ${{ steps.generate_tag.outputs.tag }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
