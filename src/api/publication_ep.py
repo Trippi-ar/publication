@@ -54,7 +54,7 @@ def get_publications(
     """
     Get publications
     """
-    return publication_service.get_all(pagination, _filter)
+    return None
 
 
 @router.post("/suggestions/{suggestion}", status_code=status.HTTP_200_OK, response_model=publication_schema.Suggestions)
